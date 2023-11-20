@@ -1,0 +1,30 @@
+pipeline {
+
+    agent any
+
+    tools{
+        maven 'maven 3.9.5'   //version del maver como etiqueta
+    }
+
+    stages {
+
+        stage('compilar'){
+            steps{
+                echo "Compilando..."    //titulo
+                sh "mvn clean compile"  //script
+            }
+        }
+
+        stage('Pruebas') {
+            steps {
+                echo "Ejecutando pruebas..."      //etiqueta titulo
+                sh "mvn test -Dspring.profiles.active=test -Dspring.data.mongodb.uri=mongodb://mongodb:27017/seguridad_test" //definimos la BD Mongodb
+            }
+            post {
+                success{
+                    junit "target/surefire-reports/*.xml"
+                }
+            }
+        }
+    }
+}
